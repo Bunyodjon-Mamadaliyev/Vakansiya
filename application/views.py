@@ -2,13 +2,10 @@ from rest_framework import generics, permissions, status, serializers
 from rest_framework.response import Response
 from .models import JobApplication
 from django.http import Http404
-from .serializers import (
-    JobApplicationSerializer,
-    JobApplicationCreateSerializer,
-    JobApplicationStatusSerializer
-)
 from jobposting.models import JobPosting
 from django.shortcuts import get_object_or_404
+from .serializers import (JobApplicationSerializer, JobApplicationCreateSerializer,
+                          JobApplicationStatusSerializer)
 
 
 class JobApplicationListCreateView(generics.ListCreateAPIView):
@@ -31,8 +28,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
 
         try:
             self.perform_create(serializer)
-            instance = serializer.instance  # Get the created instance directly from serializer
-
+            instance = serializer.instance
             full_serializer = JobApplicationSerializer(instance, context={'request': request})
 
             return Response({

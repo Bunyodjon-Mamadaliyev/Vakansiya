@@ -12,15 +12,15 @@ class SkillModelTest(TestCase):
     def test_create_skill_invalid_category(self):
         skill = Skill(name="Invalid Skill", category="invalid_category")
         with self.assertRaises(ValidationError):
-            skill.clean()  # This should raise ValidationError
+            skill.clean()
 
     def test_create_duplicate_skill_name(self):
         Skill.objects.create(name="Python", category="technical")
-        with self.assertRaises(Exception):  # Unique constraint violation
+        with self.assertRaises(Exception):
             Skill.objects.create(name="Python", category="technical")
 
     def test_skill_ordering(self):
         skill1 = Skill.objects.create(name="Python", category="technical")
         skill2 = Skill.objects.create(name="Java", category="technical")
         skills = Skill.objects.all()
-        self.assertEqual(list(skills), [skill2, skill1])  # Skills should be ordered alphabetically
+        self.assertEqual(list(skills), [skill2, skill1])

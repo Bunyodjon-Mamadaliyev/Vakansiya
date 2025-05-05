@@ -28,7 +28,7 @@ class Company(models.Model):
         null=True, blank=True
     )
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
-    employees_count = models.IntegerField(validators=[MinValueValidator(1)])
+    employees_count = models.IntegerField(default=0, validators=[MinValueValidator(1)], null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Companies"

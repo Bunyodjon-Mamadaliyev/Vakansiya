@@ -135,34 +135,26 @@ class RecommendedJobPostingListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Check if the user has a profile before accessing skills
         try:
             user_skills = self.request.user.profile.skills.all()
-        except AttributeError:  # Handle case where profile does not exist
+        except AttributeError:
             user_skills = []
 
-        # Filter job postings based on user skills
         queryset = JobPosting.objects.filter(
             is_active=True,
             deadline__gte=timezone.now().date(),
             skills_required__in=user_skills
         )
-
-        # Annotate the matching skills and total skills
         queryset = queryset.annotate(
             matching_skills=Count('skills_required', filter=Q(skills_required__in=user_skills)),
             total_skills=Greatest(Count('skills_required'), 1)
         )
-
-        # Calculate the match percentage
         queryset = queryset.annotate(
             match_percentage=ExpressionWrapper(
                 F('matching_skills') * 100.0 / F('total_skills'),
                 output_field=FloatField()
             )
         )
-
-        # Remove duplicates and order by match percentage and posted date
         queryset = queryset.distinct().order_by('-match_percentage', '-posted_date')[:10]
 
         return queryset

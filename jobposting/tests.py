@@ -1,65 +1,60 @@
 from django.test import TestCase
 from django.utils import timezone
 from decimal import Decimal
-from jobposting.models import JobPosting
+from jobposting.models import JobPosting, JobCategory
 from company.models import Company
 from skill.models import Skill
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class JobPostingModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Create a sample company
-        cls.company = Company.objects.create(name="TechCorp", location="New York")
-
-        # Create a sample skill
-        cls.skill1 = Skill.objects.create(name="Python", category="technical")
-        cls.skill2 = Skill.objects.create(name="JavaScript", category="technical")
-
-        # Create a job posting instance
+        cls.user = User.objects.create_user(username='testuser', password='12345', user_type='employer')
+        cls.company = Company.objects.create(
+            user=cls.user,
+            name="TechCorp",
+            description="A tech company",
+            website="https://techcorp.com",
+            industry="it",
+            location="New York"
+        )
+        cls.category = JobCategory.objects.create(name="IT")
+        cls.skill1 = Skill.objects.create(name="Python")
+        cls.skill2 = Skill.objects.create(name="Django")
         cls.job_posting = JobPosting.objects.create(
             company=cls.company,
-            title="Software Developer",
-            description="Develop software applications.",
-            requirements="Experience with Python and Django.",
-            responsibilities="Build and maintain web applications.",
-            location="New York",
-            job_type="full_time",
-            experience_level="mid",
-            education_required="bachelor",
-            salary_min=Decimal('50000.00'),
-            salary_max=Decimal('90000.00'),
-            deadline="2025-12-31",
+            title="Backend Developer",
+            description="Develop backend systems",
+            requirements="Experience with Django",
+            responsibilities="Build APIs",
+            location="Remote",
+            salary_min=Decimal('5000.00'),
+            salary_max=Decimal('8000.00'),
+            deadline=timezone.now().date() + timezone.timedelta(days=30),
+            posted_date=timezone.now()
         )
-
-        # Add skills to the job posting
         cls.job_posting.skills_required.add(cls.skill1, cls.skill2)
 
     def test_job_posting_str(self):
-        # Test the __str__ method
-        self.assertEqual(str(self.job_posting), "Software Developer at TechCorp")
+        self.assertEqual(str(self.job_posting), "Backend Developer at TechCorp")
 
     def test_job_posting_salary_range(self):
-        # Test the salary_range property
-        self.assertEqual(self.job_posting.salary_range, "$50,000.00 - $90,000.00")
+        self.assertEqual(self.job_posting.salary_range, "$5,000.00 - $8,000.00")
 
     def test_job_posting_is_expired(self):
-        # Test the is_expired property
-        self.assertFalse(self.job_posting.is_expired)  # As the deadline is in the future
-
-        # Set an expired deadline for the test
-        self.job_posting.deadline = "2020-12-31"
+        self.assertFalse(self.job_posting.is_expired)
+        self.job_posting.deadline = timezone.datetime(2020, 12, 31).date()
         self.job_posting.save()
-        self.assertTrue(self.job_posting.is_expired)  # As the deadline is in the past
+        self.assertTrue(self.job_posting.is_expired)
 
     def test_job_posting_increment_views(self):
-        # Test incrementing the views_count field
         initial_views = self.job_posting.views_count
         self.job_posting.increment_views()
         self.assertEqual(self.job_posting.views_count, initial_views + 1)
 
     def test_job_posting_ordering(self):
-        # Create another job posting with a later posted date
         later_posted_job = JobPosting.objects.create(
             company=self.company,
             title="Data Scientist",
@@ -73,18 +68,15 @@ class JobPostingModelTest(TestCase):
             salary_min=Decimal('60000.00'),
             salary_max=Decimal('95000.00'),
             deadline="2025-12-31",
+            posted_date=timezone.now() + timezone.timedelta(days=1)
         )
-
-        # Verify that job postings are ordered by posted_date (latest first)
         job_postings = JobPosting.objects.all()
-        self.assertEqual(job_postings[0], self.job_posting)
-        self.assertEqual(job_postings[1], later_posted_job)
+        self.assertEqual(job_postings[0], later_posted_job)
+        self.assertEqual(job_postings[1], self.job_posting)
 
     def test_job_posting_default_active_status(self):
-        # Test the default value of the 'is_active' field
         self.assertTrue(self.job_posting.is_active)
 
     def test_job_posting_skills_required(self):
-        # Test that the job posting has the correct skills
         self.assertIn(self.skill1, self.job_posting.skills_required.all())
         self.assertIn(self.skill2, self.job_posting.skills_required.all())

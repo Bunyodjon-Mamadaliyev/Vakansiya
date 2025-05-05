@@ -1,4 +1,3 @@
-# views.py
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import JobSeeker
@@ -13,7 +12,6 @@ class JobSeekerListCreateAPIView(generics.ListCreateAPIView):
     filterset_fields = ['location', 'education_level', 'skills']
 
     def get_queryset(self):
-        # Admins can see all, regular users only see their own profile
         if self.request.user.is_staff:
             return JobSeeker.objects.all().select_related('user').prefetch_related('skills')
         return JobSeeker.objects.filter(user=self.request.user).select_related('user').prefetch_related('skills')
@@ -39,7 +37,6 @@ class JobSeekerListCreateAPIView(generics.ListCreateAPIView):
         })
 
     def create(self, request, *args, **kwargs):
-        # Check if user already has a job seeker profile
         if hasattr(request.user, 'job_seeker'):
             return Response({
                 "status": False,

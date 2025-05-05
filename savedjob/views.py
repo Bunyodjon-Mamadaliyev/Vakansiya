@@ -1,9 +1,7 @@
-# views.py
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import SavedJob
 from .serializers import SavedJobSerializer, SaveJobSerializer
-from django.shortcuts import get_object_or_404
 
 
 class SavedJobListCreateAPIView(generics.ListCreateAPIView):
@@ -46,8 +44,6 @@ class SavedJobListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         saved_job = serializer.save()
-
-        # Return the full saved job details
         response_serializer = SavedJobSerializer(saved_job, context={'request': request})
         return Response({
             "status": True,

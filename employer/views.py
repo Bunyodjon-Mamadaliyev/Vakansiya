@@ -1,4 +1,3 @@
-# employer/views.py
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Employer
@@ -27,8 +26,6 @@ class EmployerCreateAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-
-        # Return full employer data after creation
         employer = Employer.objects.get(id=serializer.data['id'])
         response_serializer = EmployerSerializer(employer)
 
@@ -90,13 +87,11 @@ class EmployerListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # For company admins - list all employers in their company
         if hasattr(self.request.user, 'employer_profile') and \
                 self.request.user.employer_profile.is_primary:
             return Employer.objects.filter(
                 company=self.request.user.employer_profile.company
             )
-        # For regular users - only their own profile
         return Employer.objects.filter(user=self.request.user)
 
     def list(self, request, *args, **kwargs):

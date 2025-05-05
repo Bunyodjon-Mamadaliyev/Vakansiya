@@ -7,7 +7,6 @@ from .serializers import (
     CustomTokenObtainPairSerializer,
     LogoutSerializer
 )
-from .models import CustomUser
 
 
 class RegisterView(generics.CreateAPIView):
@@ -75,9 +74,7 @@ class RefreshTokenView(TokenRefreshView):
                 'message': "Token yangilashda xatolik yuz berdi",
                 'errors': response.data
             }
-
         return response
-
 
 class LogoutView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
@@ -117,11 +114,8 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-
-        # Add profile data if exists (you'll need to implement this part)
         data = serializer.data
-        data['profile'] = {}  # Placeholder for profile data
-
+        data['profile'] = {}
         return Response({
             'status': True,
             'message': "Foydalanuvchi ma'lumotlari muvaffaqiyatli olindi",
@@ -141,7 +135,6 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
-
         return Response({
             'status': True,
             'message': "Foydalanuvchi ma'lumotlari muvaffaqiyatli yangilandi",

@@ -1,7 +1,6 @@
-# employer/serializers.py
 from rest_framework import serializers
 from .models import Employer
-from company.serializers import CompanySerializer  # Assuming you have this
+from company.serializers import CompanySerializer
 
 
 class EmployerSerializer(serializers.ModelSerializer):
@@ -36,7 +35,6 @@ class EmployerCreateSerializer(serializers.ModelSerializer):
             user=user,
             **validated_data
         )
-
 
 class EmployerUpdateSerializer(serializers.ModelSerializer):
     class Meta:

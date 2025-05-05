@@ -1,10 +1,8 @@
-# urls.py
 from django.urls import path
 from .views import (
     JobSeekerListCreateAPIView,
     JobSeekerRetrieveDestroyAPIView,
-    ResumeUploadAPIView
-)
+    ResumeUploadAPIView)
 
 urlpatterns = [
     path('job-seekers/', JobSeekerListCreateAPIView.as_view(), name='job-seeker-create'),

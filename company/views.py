@@ -2,7 +2,6 @@ from rest_framework import generics, status, permissions, serializers
 from rest_framework.response import Response
 from .models import Company
 from .serializers import CompanySerializer
-from django.shortcuts import get_object_or_404
 
 
 class CompanyListCreateView(generics.ListCreateAPIView):

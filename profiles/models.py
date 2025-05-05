@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from skill.models import Skill  # Skill modeli mavjud deb faraz qilamiz
+from skill.models import Skill
 
 
 class Profile(models.Model):
@@ -12,8 +12,6 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     skills = models.ManyToManyField(Skill, blank=True)
-
-    # ... boshqa maydonlar
 
     def __str__(self):
         return f"{self.user.email} profili"

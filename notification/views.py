@@ -17,8 +17,6 @@ class NotificationListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Notification.objects.filter(user=self.request.user)
-
-        # Handle custom query parameters
         is_read = self.request.query_params.get('is_read')
         if is_read is not None:
             queryset = queryset.filter(is_read=is_read.lower() == 'true')

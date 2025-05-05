@@ -10,16 +10,8 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplication
-        fields = [
-            'id',
-            'job_posting',
-            'job_seeker',
-            'cover_letter',
-            'resume',
-            'status',
-            'applied_date',
-            'updated_date'
-        ]
+        fields = ['id', 'job_posting', 'job_seeker', 'cover_letter',
+                  'resume', 'status', 'applied_date', 'updated_date']
 
     def get_resume(self, obj):
         request = self.context.get('request')

@@ -3,27 +3,16 @@ from .models import Company
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    # O'qish uchun (GET so'rovlarida) industry display qiymatini qaytarish
     industry_display = serializers.CharField(source='get_industry_display', read_only=True)
-
-    # Logo uchun to'liq URL
     logo_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Company
-        fields = [
-            'id',
-            'name',
-            'industry',
-            'industry_display',  # Faqat o'qish uchun
-            'location',
-            'logo',  # Yuklash uchun
-            'logo_url',  # Faqat o'qish uchun
-            'employees_count'
-        ]
+        fields = ['id', 'name', 'industry', 'industry_display', 'location',
+                  'logo', 'logo_url', 'employees_count']
         extra_kwargs = {
-            'industry': {'write_only': True},  # POST/PATCH uchun
-            'logo': {'write_only': True},  # POST/PATCH uchun
+            'industry': {'write_only': True},
+            'logo': {'write_only': True},
         }
 
     def get_logo_url(self, obj):

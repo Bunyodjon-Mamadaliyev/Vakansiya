@@ -2,11 +2,11 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from company.models import Company
+from django.db.models.fields.files import ImageFieldFile
 
 User = get_user_model()
 
 class CompanyModelTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(username='employer1', password='pass123', user_type='employer')
 
@@ -22,6 +22,12 @@ class CompanyModelTest(TestCase):
             employees_count=10
         )
         self.assertEqual(company.name, 'Test Corp')
+        self.assertEqual(company.description, 'A test company')
+        self.assertEqual(company.website, 'https://testcorp.com')
+        self.assertEqual(company.industry, 'it')
+        self.assertEqual(company.location, 'Tashkent')
+        self.assertEqual(company.founded_year, 2000)
+        self.assertEqual(company.employees_count, 10)
         self.assertEqual(str(company), 'Test Corp')
 
     def test_founded_year_validation(self):
@@ -31,7 +37,7 @@ class CompanyModelTest(TestCase):
             description='Old description',
             industry='finance',
             location='Bukhara',
-            founded_year=1700,  # noto‘g‘ri yil
+            founded_year=1700,
             employees_count=5
         )
         with self.assertRaises(ValidationError):
@@ -44,7 +50,7 @@ class CompanyModelTest(TestCase):
             description='Still testing',
             industry='retail',
             location='Samarkand',
-            employees_count=0  # noto‘g‘ri qiymat
+            employees_count=0
         )
         with self.assertRaises(ValidationError):
             company.full_clean()
@@ -59,4 +65,5 @@ class CompanyModelTest(TestCase):
             employees_count=3
         )
         self.assertEqual(company.website, '')
-        self.assertIsNone(company.logo)
+        self.assertIsInstance(company.logo,ImageFieldFile)
+        self.assertIsNone(company.logo.name)

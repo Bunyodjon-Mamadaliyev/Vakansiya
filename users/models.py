@@ -23,7 +23,6 @@ class CustomUser(AbstractUser):
 
     @property
     def jobseeker(self):
-        """Returns the related job seeker profile if exists"""
         if hasattr(self, '_jobseeker'):
             return self._jobseeker
         from jobseeker.models import JobSeeker
@@ -32,7 +31,6 @@ class CustomUser(AbstractUser):
 
     @property
     def employer(self):
-        """Returns the related employer profile if exists"""
         if hasattr(self, '_employer'):
             return self._employer
         from employer.models import Employer

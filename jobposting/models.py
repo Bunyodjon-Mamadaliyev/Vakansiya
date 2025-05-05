@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.utils import timezone
 from decimal import Decimal
 
@@ -66,3 +66,10 @@ class JobPosting(models.Model):
     def increment_views(self):
         self.views_count += 1
         self.save(update_fields=['views_count'])
+
+
+class JobCategory(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name

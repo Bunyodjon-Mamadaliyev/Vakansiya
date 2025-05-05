@@ -17,7 +17,7 @@ class JobSeekerAdmin(admin.ModelAdmin):
     readonly_fields = ('profile_picture_preview',)
     ordering = ('-experience_years', 'last_name')
 
-    exclude = ('user',)  # user maydonini formadan yashiramiz
+    exclude = ('user',)
 
     def save_model(self, request, obj, form, change):
         if not change:

@@ -42,7 +42,6 @@ urlpatterns = ([
     path('api/', include('company.urls')),
     path('api/', include('jobposting.urls')),
     path('api/', include('jobseeker.urls')),
-    # path('api/', include('common.urls')),
     path('api/', include('notification.urls')),
     path('api/', include('savedjob.urls')),
     path('api/', include('skill.urls')),

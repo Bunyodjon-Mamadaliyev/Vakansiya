@@ -1,9 +1,9 @@
 from django.test import TestCase
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 from skill.models import Skill
 from jobseeker.models import JobSeeker
 from django.contrib.auth import get_user_model
+import datetime
 
 User = get_user_model()
 
@@ -25,7 +25,7 @@ class JobSeekerModelTest(TestCase):
             user=self.user,
             first_name='Ali',
             last_name='Valiyev',
-            date_of_birth='1990-05-01',
+            date_of_birth=datetime.date(1990, 1, 1),
             phone_number='998901234567',
             location='Tashkent',
             education_level='bachelor',
@@ -41,7 +41,7 @@ class JobSeekerModelTest(TestCase):
             user=self.user,
             first_name='Ali',
             last_name='Valiyev',
-            date_of_birth='1990-05-01',
+            date_of_birth=datetime.date(1990, 1, 1),
             phone_number='998901234567',
             location='Tashkent',
             education_level='bachelor',
@@ -54,7 +54,7 @@ class JobSeekerModelTest(TestCase):
             user=self.user,
             first_name='Ali',
             last_name='Valiyev',
-            date_of_birth='1990-05-01',
+            date_of_birth=datetime.date(1990, 1, 1),
             phone_number='998901234567',
             location='Tashkent',
             education_level='bachelor',
@@ -63,28 +63,35 @@ class JobSeekerModelTest(TestCase):
         self.assertEqual(job_seeker.full_name, 'Ali Valiyev')
 
     def test_age_method(self):
+        date_of_birth = datetime.date(1990, 1, 1)
         job_seeker = JobSeeker.objects.create(
             user=self.user,
             first_name='Ali',
             last_name='Valiyev',
-            date_of_birth='1990-05-01',
+            date_of_birth=date_of_birth,
             phone_number='998901234567',
             location='Tashkent',
             education_level='bachelor',
             experience_years=5
         )
-        self.assertEqual(job_seeker.age(), 34)  # 2024-1990 = 34
+
+        today = datetime.date.today()
+        expected_age = today.year - date_of_birth.year - (
+                (today.month, today.day) < (date_of_birth.month, date_of_birth.day)
+        )
+
+        self.assertEqual(job_seeker.age(), expected_age)
 
     def test_experience_years_validation(self):
         job_seeker = JobSeeker(
             user=self.user,
             first_name='Ali',
             last_name='Valiyev',
-            date_of_birth='1990-05-01',
+            date_of_birth=datetime.date(1990, 1, 1),
             phone_number='998901234567',
             location='Tashkent',
             education_level='bachelor',
-            experience_years=60  # Noto‘g‘ri qiymat, 60+ yillik tajriba noto‘g‘ri
+            experience_years=60
         )
         with self.assertRaises(ValidationError):
             job_seeker.full_clean()

@@ -1,9 +1,6 @@
 from django.urls import path
-from .views import (
-    JobPostingListCreateView,
-    JobPostingRetrieveUpdateDestroyView,
-    RecommendedJobPostingListView
-)
+from .views import (JobPostingListCreateView, JobPostingRetrieveUpdateDestroyView,
+    RecommendedJobPostingListView)
 
 urlpatterns = [
     path('job-postings/', JobPostingListCreateView.as_view(), name='job-posting-list-create'),

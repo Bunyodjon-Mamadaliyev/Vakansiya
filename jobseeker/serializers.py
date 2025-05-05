@@ -1,8 +1,6 @@
-# serializers.py
 from rest_framework import serializers
 from .models import JobSeeker
 from skill.models import Skill
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from skill.serializers import SkillSerializer
 
@@ -36,7 +34,6 @@ class JobSeekerSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'resume', 'profile_picture']
 
     def validate_education_level(self, value):
-        # Normalize education level
         value = value.lower()
         choices = [choice[0] for choice in JobSeeker.EDUCATION_LEVEL_CHOICES]
         if value not in choices:
@@ -52,7 +49,6 @@ class ResumeUploadSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        # Delete old resume if exists
         if instance.resume:
             instance.resume.delete()
         return super().update(instance, validated_data)

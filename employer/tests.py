@@ -6,7 +6,6 @@ from employer.models import Employer
 User = get_user_model()
 
 class EmployerModelTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
             username='employer1',
